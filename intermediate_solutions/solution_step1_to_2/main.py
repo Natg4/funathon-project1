@@ -3,8 +3,7 @@ import pandas as pd
 from sklearn.compose import make_column_selector as selector
 from sklearn.compose import make_column_transformer
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, HistGradientBoostingRegressor
-from sklearn.model_selection import cross_validate
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_validate, train_test_split, GridSearchCV
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, StandardScaler
 from sklearn.metrics import mean_absolute_percentage_error, r2_score
@@ -45,23 +44,21 @@ min_target = data_75[target].quantile(0.1)
 data_preproc = data_75[(data_75[target] <= max_target) & (data_75[target] >= min_target)]
 
 # %%
-data_features = data_preproc[features_list[1]]
-data_target = data_preproc[target] # depcom (question encoding ?), dteloc (boolean apt), dnbppr, dnbcha, dsupdc
-
-# %%
 # Encoding issue - differentiate between numeric and other
 cols_cat = selector(dtype_exclude="number")
 cols_num = selector(dtype_include="number")
 
 # %%
-data_features.hist(bins=10)
+X = data_preproc[features_list[1]]
+y = data_preproc[target] # depcom (question encoding ?), dteloc (boolean apt), dnbppr, dnbcha, dsupdc
+X.hist(bins=10)
 # Features are not troncated
 # %%
-data_features.hist(log=True)
+X.hist(log=True)
 # %%
-data_target.hist(bins=10)  # skewed to 0 bcs prices
+y.hist(bins=10)  # skewed to 0 bcs prices
 # %%
-data_target.plot(kind='hist', logx=True, logy=True)  # sharp decrease for assets above 1Me
+y.plot(kind='hist', logx=True, logy=True)  # sharp decrease for assets above 1Me
 
 # %%
 preprocessor = make_column_transformer(
@@ -74,45 +71,60 @@ model_rf = make_pipeline(preprocessor, RandomForestRegressor())
 
 models_list = [model_gb, model_hist, model_rf]
 # %%
-#
-
-max_target = data_75[target].quantile(0.8)
-min_target = data_75[target].quantile(0.2)
+# Impact of tails of price_sqm on model performance
+## Option 1 - remove extreme values
+# 1a - thresholds 0.1/0.9
+max_target = data_75[target].quantile(0.9)
+min_target = data_75[target].quantile(0.1)
 data_preproc = data_75[(data_75[target] <= max_target) & (data_75[target] >= min_target)]
 
+# 1b - thresholds 0.2/0.8
+# max_target = data_75[target].quantile(0.8)
+# min_target = data_75[target].quantile(0.2)
+# data_preproc = data_75[(data_75[target] <= max_target) & (data_75[target] >= min_target)]
 # %%
+# Impact of nb of features on accuracy :  
+
+scoring = {
+    'r2': 'r2',
+    'mape': 'neg_mean_absolute_percentage_error'
+}
+
 for feature in features_list:
-    data_features = data_preproc[feature]
-    data_target = data_preproc[target] # depcom (question encoding ?), dteloc (boolean apt), dnbppr, dnbcha, dsupdc
+    X = data_preproc[feature]
+    y = data_preproc[target] # depcom (question encoding ?), dteloc (boolean apt), dnbppr, dnbcha, dsupdc
 
     start = time.time()
-    cv_results = cross_validate(model_gb, data_features, data_target)
+    cv_results = cross_validate(estimator=model_gb, X=X, y=y, scoring=scoring, return_train_score=True)
     elapsed_time = time.time() - start
-    scores = cv_results["test_score"]
-
-    #
+    
     print(
         f"Data set : \n"
-        f"   - {data_features.shape[1]} col ({list(data_features.columns)})\n"
-        f"   - n_ops : {data_features.shape[0]} \n"
-        f"Mean cross validation accuracy is : "
-        f"{scores.mean():.3f} +- {scores.std():.3f}"
+        f"   - {X.shape[1]} col ({list(X.columns)})\n"
+        f"   - n_ops : {X.shape[0]} \n"
+        f"Training score is : \n"
+        f"   - with R² : {cv_results['train_r2'].mean():.3f} +- {cv_results['train_r2'].std():.3f} \n"
+        f"   - with MAPE : {-cv_results['train_mape'].mean():.3f} +- {cv_results['train_mape'].std():.3f} \n"
+        f"Mean cross validation accuracy is : \n"
+        f"   - with R² : {cv_results['test_r2'].mean():.3f} +- {cv_results['test_r2'].std():.3f} \n"
+        f"   - with MAPE : {-cv_results['test_mape'].mean():.3f} +- {cv_results['test_mape'].std():.3f} \n"
         f" with an elapsed time of {elapsed_time:.3f}s"
     )
+
 # %%
 max_target = data_75[target].quantile(0.9)
 min_target = data_75[target].quantile(0.1)
 data_preproc = data_75[(data_75[target] <= max_target) & (data_75[target] >= min_target)]
 
 for feature in features_list:
-    data_features = data_preproc[feature]
-    data_target = data_preproc[target] # depcom (question encoding ?), dteloc (boolean apt), dnbppr, dnbcha, dsupdc
-    X_train, X_test, y_train, y_test = train_test_split(data_features, data_target)
+    X = data_preproc[feature]
+    y = data_preproc[target] # depcom (question encoding ?), dteloc (boolean apt), dnbppr, dnbcha, dsupdc
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
 
     print(
         f"Data set : \n"
-        f"   - {data_features.shape[1]} col ({list(data_features.columns)})\n"
-        f"   - n_ops : {data_features.shape[0]} \n"
+        f"   - {X.shape[1]} col ({list(X.columns)})\n"
+        f"   - n_ops : {X.shape[0]} \n"
     )
 
     for model in models_list:
@@ -134,6 +146,77 @@ for feature in features_list:
 # %%
 
 dummy_regr = DummyRegressor(strategy="mean")
-dummy_regr.fit(data_features, data_target)
-dummy_regr.score(data_features, data_target)
+dummy_regr.fit(X, y)
+dummy_regr.score(X, y)
+# %%
+
+max_target = data_75[target].quantile(0.9)
+min_target = data_75[target].quantile(0.1)
+data_preproc = data_75[(data_75[target] <= max_target) & (data_75[target] >= min_target)]
+
+X = data_preproc[features_list[1]]
+y = data_preproc[target]
+
+# Hyper parameters tuning
+param_grid =   {
+    'histgradientboostingregressor__learning_rate': [0.1, 0.5, 0.8], 
+    'histgradientboostingregressor__max_iter': [50, 100, 250],
+    'histgradientboostingregressor__l2_regularization': [0, 0.01, 0.5],
+    'histgradientboostingregressor__max_features': [0.65, 0.75, 0.85]
+  }
+
+gs = GridSearchCV(
+    model_hist, 
+    param_grid, 
+    scoring={'neg_mape':'neg_mean_absolute_percentage_error', 'r2':'r2'},
+    refit='neg_mape')
+
+gs.fit(X,y)
+print(
+    f"Best estimator has params : {gs.best_params_} \n associated with a MAPE of {-gs.best_score_}"
+)
+
+
+# %%
+from plotnine import ggplot, aes, geom_bar, facet_grid, labs, theme_matplotlib, theme, element_text
+import pandas as pd
+
+# Extract results
+results = pd.DataFrame(gs.cv_results_)[["param_histgradientboostingregressor__learning_rate",
+                     "param_histgradientboostingregressor__max_iter",
+                     "param_histgradientboostingregressor__max_features",
+                     "param_histgradientboostingregressor__l2_regularization",
+                     "mean_test_neg_mape"]]
+plot_data = results.rename(columns={
+    "param_histgradientboostingregressor__learning_rate": "learning_rate",
+    "param_histgradientboostingregressor__max_iter": "max_iter",
+    "param_histgradientboostingregressor__max_features": "max_features",
+    "param_histgradientboostingregressor__l2_regularization": "l2",
+    "mean_test_neg_mape": "neg_mape"
+}).dropna()
+plot_data["mape"] = -plot_data["neg_mape"]
+plot_data["learning_rate"] = plot_data["learning_rate"].astype(str)
+plot_data["max_iter"] = plot_data["max_iter"].astype(str)
+plot_data["max_features"] = plot_data["max_features"].astype(str)
+plot_data["l2"] = plot_data["l2"].astype(str)
+
+# Create the plot
+(
+    ggplot(plot_data, aes(x="max_iter", y="mape", fill="l2")) +
+    geom_bar(stat="identity", position="dodge") +
+    facet_grid("max_features~learning_rate", labeller="label_both") +
+    labs(
+        title="MAPE by Hyperparameters",
+        x="Max Iterations",
+        y="MAPE (%)",
+        fill="L2 Regularization"
+    ) +
+    theme_matplotlib() + 
+    theme(
+        plot_caption=element_text(hjust=0, size=10, margin={"t": 10}),
+        figure_size=(10, 8),
+        plot_margin=0.1,  # Adjust margins to keep caption inside
+    )
+)
+
 # %%

@@ -202,3 +202,7 @@ HistGradientBoostingRegressor => far better model
 
 dummyregressor :
 - score is 0 so model performs much better
+
+Hyperparameter tuning
+
+add dniv / dnbniv ?
