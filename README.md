@@ -159,6 +159,7 @@ pairplot with log_price : cf. stat_des_some_vars_pairplot
         - a minimal : CV score = 6% +-1%  
         - all features : CV score = 25% +-2%
 
+Cf features_plus_model_selection
 Data set : 
    - 7 col (['depcom', 'x', 'y', 'dteloc', 'dnbppr', 'dnbcha', 'dsupdc'])
    - n_ops : 322805 
@@ -204,5 +205,6 @@ dummyregressor :
 - score is 0 so model performs much better
 
 Hyperparameter tuning
+ => impact of hyperparams on MAPE is residual. cf. hyperparams_tuning and cf. hyperparams_plot
 
 add dniv / dnbniv ?

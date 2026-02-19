@@ -9,6 +9,11 @@ from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, StandardScaler
 from sklearn.metrics import mean_absolute_percentage_error, r2_score
 from sklearn.dummy import DummyRegressor
 import time
+
+from plotnine import (
+    ggplot, aes, geom_bar, geom_point, facet_grid,
+    labs, theme, element_text, position_dodge
+)
 # %%
 data = pd.read_parquet('s3://confpns/synthetic-transactions/rawdata/transactions/transactions_flats_final.parquet')
 data_h = pd.read_parquet("s3://confpns/synthetic-transactions/rawdata/transactions/transactions_houses_final.parquet")
@@ -25,6 +30,8 @@ data_all["dteloc"] = pd.Categorical(
 ).rename_categories({"1": "House", "2": "Flat"})
 
 data_all["price_sqm"] = data_all["valeurfonc"] / data_all["dsupdc"]
+data_all["dnivrel"] = data_all["dniv"] / data_all["dnbniv"]
+
 # Selecting the only cols we want to use
 
 # %%
@@ -112,6 +119,8 @@ for feature in features_list:
     )
 
 # %%
+# features and model 
+#| label: features_plus_model_selection 
 max_target = data_75[target].quantile(0.9)
 min_target = data_75[target].quantile(0.1)
 data_preproc = data_75[(data_75[target] <= max_target) & (data_75[target] >= min_target)]
@@ -144,7 +153,7 @@ for feature in features_list:
         )
 
 # %%
-
+#| label: hyperparams_tuning
 dummy_regr = DummyRegressor(strategy="mean")
 dummy_regr.fit(X, y)
 dummy_regr.score(X, y)
@@ -178,23 +187,23 @@ print(
 
 
 # %%
-from plotnine import ggplot, aes, geom_bar, facet_grid, labs, theme_matplotlib, theme, element_text
-import pandas as pd
-
+#| label: hyperparams_plot
 # Extract results
 results = pd.DataFrame(gs.cv_results_)[["param_histgradientboostingregressor__learning_rate",
                      "param_histgradientboostingregressor__max_iter",
                      "param_histgradientboostingregressor__max_features",
                      "param_histgradientboostingregressor__l2_regularization",
-                     "mean_test_neg_mape"]]
+                     "mean_test_neg_mape",
+                     "mean_test_r2"]]
 plot_data = results.rename(columns={
     "param_histgradientboostingregressor__learning_rate": "learning_rate",
     "param_histgradientboostingregressor__max_iter": "max_iter",
     "param_histgradientboostingregressor__max_features": "max_features",
     "param_histgradientboostingregressor__l2_regularization": "l2",
-    "mean_test_neg_mape": "neg_mape"
+    "mean_test_neg_mape": "neg_mape", 
+    "mean_test_r2": "r2"
 }).dropna()
-plot_data["mape"] = -plot_data["neg_mape"]
+plot_data["mape"] = -plot_data["neg_mape"]*4  # Scale MAPE to align with R²
 plot_data["learning_rate"] = plot_data["learning_rate"].astype(str)
 plot_data["max_iter"] = plot_data["max_iter"].astype(str)
 plot_data["max_features"] = plot_data["max_features"].astype(str)
@@ -202,21 +211,35 @@ plot_data["l2"] = plot_data["l2"].astype(str)
 
 # Create the plot
 (
-    ggplot(plot_data, aes(x="max_iter", y="mape", fill="l2")) +
-    geom_bar(stat="identity", position="dodge") +
-    facet_grid("max_features~learning_rate", labeller="label_both") +
-    labs(
-        title="MAPE by Hyperparameters",
-        x="Max Iterations",
-        y="MAPE (%)",
-        fill="L2 Regularization"
+    ggplot() +
+    geom_bar(
+        aes(x="max_iter", y="mape", fill="l2"),
+        data=plot_data,
+        stat="identity",
+        position="dodge",
+        alpha=0.7
     ) +
-    theme_matplotlib() + 
+    geom_point(
+        aes(x="max_iter", y="r2", color="l2"),
+        data=plot_data,
+        position=position_dodge(width=1),
+        size=3,
+        shape="o"
+    ) +
+    facet_grid("max_features ~ learning_rate", labeller="label_both") +
+    labs(
+        title="Hyperparameter Tuning: 4xMAPE (Bars) and R² (Points)",
+        x="Max Iterations",
+        y="Scaled Metrics (4xMAPE or R²)",
+        fill="L2 Regularization",
+        color="L2 Regularization",
+        caption="Bars: 4xMAPE (%). Points: R²."
+    ) +
+    theme_matplotlib() +
     theme(
         plot_caption=element_text(hjust=0, size=10, margin={"t": 10}),
-        figure_size=(10, 8),
-        plot_margin=0.1,  # Adjust margins to keep caption inside
+        figure_size=(12, 10),
+        plot_margin=0.1
     )
 )
-
 # %%
