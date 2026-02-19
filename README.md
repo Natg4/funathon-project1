@@ -212,3 +212,5 @@ add dniv / dnbniv as dnivrel : no impact, cf nb_features_accuracy.
 Add distance to Seine ? 
 
 Plot the results ? 
+
+stat des with pandas to select variables : cf. stat_des75_pandas

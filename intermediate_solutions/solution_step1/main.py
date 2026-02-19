@@ -346,3 +346,22 @@ matplotlib.pyplot.show()
 # %%
 data.len()
 # %%
+#| label: stat_des75_pandas
+# %%
+import matplotlib.pyplot as plt
+import pandas as pd
+
+ax = data_75.hist(log=True, figsize=(12, 10), xlabelsize=8,    # x-axis label size
+    ylabelsize=8)
+
+# Set label sizes for all subplots
+for axes in ax.flatten():
+    axes.tick_params(axis='both', labelsize=8)  # Tick labels
+    axes.set_xlabel(axes.get_xlabel(), fontsize=8)  # x-axis label
+    axes.set_ylabel(axes.get_ylabel(), fontsize=8)  # y-axis label
+    axes.set_title(axes.get_title(), fontsize=8)    # Subplot title
+
+plt.subplots_adjust(wspace=0.3, hspace=0.5)
+
+plt.suptitle("Custom Histogram", fontsize=12)  # Main title
+plt.show()
