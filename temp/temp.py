@@ -11,7 +11,7 @@ dict_fr_en = {
   'libnatmut':['trans_type_label','Type of transaction'],
   'valeurfonc':['price','Price of the transaction', 'Price of the transaction is in EUR'],  
   'dteloc':['prop_type','Type of property',  '1 represents a flat and 2 a house'],
-  'jannath':['prop_year','Year of contruction of the property', 'This variable has been harmonized to correct for typing mistakes. More details is available in the introduction.'],
+  'jannath':['prop_year_harm','Year of contruction of the property', 'This variable has been harmonized to correct for typing mistakes. More details is available in the introduction.'],
   'ccodep':['prop_loc_dep','Department code where the property is located', "Data doesn't cover the whole French territory - overseas territory are included but Alsace-Moselle (Eastern part of France) isn't"],  # list of departments in France  - overseas yes but Alsace Moselle nope
   'depcom':['prop_loc_',"Official city's code where the property is located", 'see remarks above'],  # COG : official geographical code https://www.insee.fr/en/metadonnees/source/serie/s2084
   'x':['prop_loc_x','Longitude where the property is located', 'see remarks above'],  # Type of projection ?
