@@ -57,7 +57,7 @@ For more information, you can read the paragraph on RF hyperparameters [here](ht
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 from sklearn.ensemble import RandomForestRegressor
@@ -93,7 +93,7 @@ Scikit-learn  distinguishes **parameters** from **fitted attributes**. Here, to 
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 
@@ -101,7 +101,7 @@ rf.oob_score_
 ```
 
 
-2.  Now, calculate the accuracy of the model on the test set - that is, how far off the prediction are from the actual values.
+3.  Now, calculate the accuracy of the model on the test set - that is, how far off the prediction are from the actual values.
 
     > Note : This is just an illustration of the evaluation process. More details on metrics will be covered in the [dedicated section](3-metrics.qmd).
 
@@ -117,7 +117,7 @@ rf.oob_score_
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 from sklearn.metrics import mean_squared_error
@@ -156,7 +156,7 @@ We will implement a function to plot the OOB error as a function of the number o
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 
@@ -202,7 +202,7 @@ y_sub = y_train[X_sub.index]
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 import warnings 
@@ -234,7 +234,7 @@ for n in range(min_estimators, max_estimators, 20):
 warnings.resetwarnings()
 ```
 
-3.  (*Optional*) Using the *Out-of-Bag (OOB) error*, try to plot the convergence of the OOB error as a function of the number of trees
+3.  (*Optional*) Using the *Out-of-Bag (OOB) error*, try to plot the convergence of the OOB error as a function of the number of trees.
 
     <details>
 
@@ -252,7 +252,7 @@ warnings.resetwarnings()
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 import matplotlib.pyplot as plt
@@ -312,7 +312,7 @@ def rf_error_oob_plot(X_train,
     warnings.resetwarnings()
 
     # Generate the "OOB error rate" vs. "n_estimators" plot.
-    xs, ys = zip(*oob_score)
+    xs, ys = zip(*oob_scores)
 
     fig, ax = plt.subplots()
     ax.plot(xs, ys)
@@ -329,7 +329,7 @@ You can select the number of trees (`n_estimators`) now, with the OOB error plot
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 oob_error_ntrees = rf_error_oob_plot(X_train=X_train,
@@ -347,7 +347,8 @@ print(oob_error_ntrees)
 
 > Note : In the Preprocessing section, you saw how to build a Pipeline. In this exercise, we will use Pipeline again. The first exercise didn't use it to let you practice scikit-learn tools documented [here](https://scikit-learn.org/stable/modules/compose.html#pipelines-and-composite-estimators).
 
-1.  Create a dictionary with all hyperparameters to test for training
+
+1.  Create a dictionary with all hyperparameters to test for training.
 
     <details>
 
@@ -356,14 +357,16 @@ print(oob_error_ntrees)
     Pay attention to hyperparameter names : when using `Pipeline` and `TransformedTargetRegressor` objects, theses names are more complex than plain `RandomForestRegressor` parameters names. In the previous section, we used two objects for training :
 
     -   `TransformedTargetRegressor` to apply log transformation on the target - the corresponding parameter prefix is `regressor`
-    -   `Pipeline` to apply all preprocessing transformations and fir the model : you need to refer to the name of the RF step (it was `'RF'`)\
+    -   `Pipeline` to apply all preprocessing transformations and fit the model : you need to refer to the name of the random forest step (it was `'RF'`)\
         For example, for the hyperparameter `n_estimators`, the key in the parameter dictionary must be `regressor__RF__n_estimators`
+
+    More details on [scikit learn's documentation](https://scikit-learn.org/stable/modules/compose.html#access-to-nested-parameters)
 
     </details>
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 
@@ -374,13 +377,14 @@ param_grid = {
 }
 ```
 
-2.  Using the [Grid Search documentation](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html), write the code to set up and run cross-validated hyperparameter tuning for the RF model
+2.  Using the [Grid Search documentation](https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html), write the code to set up and run cross-validated hyperparameter tuning for the RF model.
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
+from sklearn.model_selection import GridSearchCV
 
 # Grid search
 grid_search = GridSearchCV(
@@ -396,18 +400,18 @@ grid_search = GridSearchCV(
 grid_search.fit(X_train, y_train)
 ```
 
-3.  From the fitted `grid_search` object, retrieve the best hyperparameters found for the model
+3.  From the fitted `grid_search` object, retrieve the best hyperparameters found for the model.
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 
 print(grid_search.best_params_)
 ```
 
-4.  From the fitted `grid_search` object, retrieve the best model and and retrain it on the full training set
+4.  From the fitted `grid_search` object, retrieve the best model and and retrain it on the full training set.
 
 > Note : Which type is `best_estimator_` attribute ?
 
@@ -427,7 +431,7 @@ To access the attributes sent back by the training phase listed in the documenta
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 
@@ -455,7 +459,7 @@ Several metrics are commonly used to evaluate regression models:
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 
@@ -474,7 +478,7 @@ You can use `mean_squared_error`, `mean_absolute_error`, and `r2_score` from `sk
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
@@ -501,7 +505,7 @@ Use `matplotlib.pyplot` to create a scatter plot of `y_test` against `y_pred`. A
 
 ```{python}
 #| code-fold: true
-#| code-summary: Cliquer pour voir la réponse
+#| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
 
