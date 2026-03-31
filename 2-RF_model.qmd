@@ -181,23 +181,23 @@ y_sub = df_sub["valfonc_m2"]  # target must be a dataframe with 1 column
 
     <summary>Click to view a hint</summary>
 
-        As a hint, here is the code to calculate the OOB score. 
+        As a hint, here is the code to calculate and store the OOB score. 
         
         ```python
-        oob_errors = []
+        oob_scores = []
         warnings.filterwarnings("ignore", message="Some inputs do not have OOB scores")
         # filterwarnings remove some warnings messages
         for n in range(min_estimators, max_estimators, 10):
             rf_pipeline["random_forests"].set_params(n_estimators=n)
             rf_pipeline.fit(X_sub, y_sub)
             if metric == "r2":
-                oob_errors.append((n, 1 - rf.oob_score_))
+                oob_scores.append((n, 1 - rf_pipeline["random_forests"].oob_score_))
             elif metric == "neg_root_mean_squared_error":
-                mse = np.mean((y_sub - rf.oob_prediction_) ** 2)
-                oob_errors.append((n, np.sqrt(mse)))
+                mse = np.mean((y_sub - rf_pipeline["random_forests"].oob_prediction_) ** 2)
+                oob_scores.append((n, np.sqrt(mse)))
             else:
-                mae = np.mean(np.abs(y_sub - rf.oob_prediction_))
-                oob_errors.append((n, mae))
+                mae = np.mean(np.abs(y_sub - rf_pipeline["random_forests"].oob_prediction_))
+                oob_scores.append((n, mae))
         warnings.resetwarnings()
         ```
 
@@ -227,20 +227,20 @@ rf_pipeline = Pipeline([
     ('random_forests', rf)
 ])
 
-oob_errors = []
+oob_scores = []
 warnings.filterwarnings("ignore", message="Some inputs do not have OOB scores")
 # filterwarnings remove some warnings messages
 for n in range(min_estimators, max_estimators, 10):
     rf_pipeline["random_forests"].set_params(n_estimators=n)
     rf_pipeline.fit(X_sub, y_sub)
     if metric == "r2":
-        oob_errors.append((n, 1 - rf.oob_score_))
+        oob_scores.append((n, 1 - rf_pipeline["random_forests"].oob_score_))
     elif metric == "neg_root_mean_squared_error":
-        mse = np.mean((y_sub - rf.oob_prediction_) ** 2)
-        oob_errors.append((n, np.sqrt(mse)))
+        mse = np.mean((y_sub - rf_pipeline["random_forests"].oob_prediction_) ** 2)
+        oob_scores.append((n, np.sqrt(mse)))
     else:
-        mae = np.mean(np.abs(y_sub - rf.oob_prediction_))
-        oob_errors.append((n, mae))
+        mae = np.mean(np.abs(y_sub - rf_pipeline["random_forests"].oob_prediction_))
+        oob_scores.append((n, mae))
 warnings.resetwarnings()
 ```
 
@@ -265,6 +265,7 @@ warnings.resetwarnings()
 #| code-summary: Cliquer pour voir la réponse
 #| code-overflow: scroll
 #| eval: false
+import matplotlib.pyplot as plt
 
 rf_params = {
     "max_depth": 8,
@@ -313,23 +314,23 @@ def rf_error_oob_plot(X_train,
         ('random_forests', rf)
     ])
 
-    oob_errors = []
+    oob_scores = []
     warnings.filterwarnings("ignore", message="Some inputs do not have OOB scores")
-    for n in range(min_estimators, max_estimators, 5):
+    for n in range(min_estimators, max_estimators, 10):
         rf_pipeline["random_forests"].set_params(n_estimators=n)
         rf_pipeline.fit(X_sub, y_sub)
         if metric == "r2":
-            oob_errors.append((n, 1 - rf.oob_score_))
+            oob_scores.append((n, 1 - rf_pipeline["random_forests"].oob_score_))
         elif metric == "neg_root_mean_squared_error":
-            mse = np.mean((y_sub - rf.oob_prediction_) ** 2)
-            oob_errors.append((n, np.sqrt(mse)))
+            mse = np.mean((y_sub - rf_pipeline["random_forests"].oob_prediction_) ** 2)
+            oob_scores.append((n, np.sqrt(mse)))
         else:
-            mae = np.mean(np.abs(y_sub - rf.oob_prediction_))
-            oob_errors.append((n, mae))
+            mae = np.mean(np.abs(y_sub - rf_pipeline["random_forests"].oob_prediction_))
+            oob_scores.append((n, mae))
     warnings.resetwarnings()
 
     # Generate the "OOB error rate" vs. "n_estimators" plot.
-    xs, ys = zip(*oob_errors)
+    xs, ys = zip(*oob_score)
 
     fig, ax = plt.subplots()
     ax.plot(xs, ys)
@@ -521,7 +522,6 @@ Use `matplotlib.pyplot` to create a scatter plot of `y_test` against `y_pred`. A
 #| code-summary: Cliquer pour voir la réponse
 #| code-overflow: scroll
 #| eval: false
-import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(7, 7))
 
