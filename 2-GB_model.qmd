@@ -39,6 +39,8 @@ For more information, you can read the detailed presentation of the gradient boo
 
 ## Training a baseline Gradient Boosting model
 
+To allow for comparison with the random forest section, we chose to use the same conditions : dropping the `datemut` and `dteloc` features and working with the **non transformed target** (i.e.price per square meter) and not use the transformed target (i.e. log of the price per square meter) defined at the end of the pre-processing. We will come back to this later on and chain it with the preprocessing steps.
+
 ::: {.callout-tip collapse="false" icon="false"}
 ## <i class="bi bi-book"></i> Exercice 7: Train your first Gradient Boosting model
 
@@ -53,7 +55,7 @@ For more information, you can read the detailed presentation of the gradient boo
 #| eval: false
 from sklearn.ensemble import HistGradientBoostingRegressor
 X = df.drop(columns=["valfonc_m2", "datemut", "dteloc"])  
-y = np.log10(df["valfonc_m2"]) 
+y = df["valfonc_m2"]
 X_train, X_test, y_train, y_test = train_test_split(
     X, y,
     test_size=0.2,
@@ -369,61 +371,55 @@ print(f"\nBest combination: max_leaf_nodes={BEST_LEAVES}, "
 
 ### Step 3 — Optimise the regularisation parameters
 
-6.  Using the best learning rate and tree structure found in the previous steps, train one model for each value of `l2_regularization` in the list below. Record and plot train/test scores. Does regularisation help reduce overfitting?
+6.  Using the best hyperparameters found in steps 1 and 2, train one model for each value of `l2_regularization` in the list below. Plot train and test **R²** scores. Does regularisation help reduce the gap between train and test performance?
 
 ```{python}
 #| code-fold: true
 #| code-summary: See the solution
 #| code-overflow: scroll
 #| eval: false
-l2_values = [0.0, 0.1, , 0.3, 0.5, 0.8]
-reg_results = []
+l2_values    = [0.0, 0.1, 0.5, 1.0, 5.0]
+step3_results = []
 
 for l2 in l2_values:
     model = HistGradientBoostingRegressor(
+        max_iter=BEST_ITER,
         learning_rate=BEST_LR,
-        max_iter=1000,
-        max_leaf_nodes=BEST_LEAVES,
+        max_depth=BEST_DEPTH,
         min_samples_leaf=BEST_MIN_LEAF,
         l2_regularization=l2,
-        early_stopping=True,
-        validation_fraction=0.1,
-        n_iter_no_change=20,
         random_state=RANDOM_STATE,
     )
     model.fit(X_train, y_train)
 
     scores = gb_scores(model, X_train, y_train, X_test, y_test)
-    reg_results.append({
+    step3_results.append({
         "l2_regularization": l2,
-        "n_iter"           : model.n_iter_,
         "train_rmse"       : scores["train"]["RMSE"],
         "test_rmse"        : scores["test"]["RMSE"],
         "train_r2"         : scores["train"]["R2"],
         "test_r2"          : scores["test"]["R2"],
     })
 
-df_reg = pd.DataFrame(reg_results)
+df_step3 = pd.DataFrame(step3_results)
 
-# Plot
 fig, ax = plt.subplots(figsize=(8, 4))
-ax.plot(df_reg["l2_regularization"], df_reg["train_r2"], marker="o",
+ax.plot(df_step3["l2_regularization"], df_step3["train_r2"], marker="o",
         label="Train R²")
-ax.plot(df_reg["l2_regularization"], df_reg["test_r2"],  marker="s",
+ax.plot(df_step3["l2_regularization"], df_step3["test_r2"],  marker="s",
         label="Test R²", linestyle="--")
 ax.set_xlabel("l2_regularization")
 ax.set_ylabel("R²")
-ax.set_title("Train vs. Test R² — L2 regularisation")
+ax.set_title("Step 3 — Optimisation of l2_regularization")
 ax.legend()
 ax.grid(True, linestyle=":")
 plt.tight_layout()
 plt.show()
 
-# Best value
-best_reg_row = df_reg.loc[df_reg["test_r2"].idxmax()]
-BEST_L2 = best_reg_row["l2_regularization"]
-print(f"\nBest l2_regularization: {BEST_L2}  "
-      f"(test R²={best_reg_row['test_r2']:.4f})")
+best_row = df_step3.loc[df_step3["test_r2"].idxmax()]
+BEST_L2  = best_row["l2_regularization"]
+print(f"\nBest l2_regularization: {BEST_L2}"
+      f"  (test R²={best_row['test_r2']:.4f})")
 ```
 
 ### Step 4 — Train the final model
@@ -440,14 +436,11 @@ from sklearn.compose import TransformedTargetRegressor
 import numpy as np
 
 gb_final = HistGradientBoostingRegressor(
+    max_iter=BEST_ITER,
     learning_rate=BEST_LR,
-    max_iter=1000,
-    max_leaf_nodes=BEST_LEAVES,
+    max_depth=BEST_DEPTH,
     min_samples_leaf=BEST_MIN_LEAF,
     l2_regularization=BEST_L2,
-    early_stopping=True,
-    validation_fraction=0.1,
-    n_iter_no_change=20,
     random_state=RANDOM_STATE,
 )
 
@@ -461,7 +454,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # Wrap in the same pipeline / TransformedTargetRegressor as the RF section
 gb_pipeline = Pipeline([
-    ("preprocessor", preprocessor),  # same preprocessor as defined in preprocessing section
+    ("preprocessor", preprocessor),  # same preprocessor as defined in the preprocessing section
     ("GB", gb_final),
 ])
 
