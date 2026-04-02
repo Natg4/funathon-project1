@@ -460,8 +460,7 @@ gb_pipeline = Pipeline([
 
 gb_model = TransformedTargetRegressor(
     regressor=gb_pipeline,
-    func=np.log1p,
-    inverse_func=np.expm1,
+    transformer=y_transformer
 )
 
 gb_model.fit(X_train, y_train)
