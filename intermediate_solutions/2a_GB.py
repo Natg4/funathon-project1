@@ -197,8 +197,8 @@ def plot_results_cv(param_x:str, results_df_):
 plot_results_cv("max_iter", df_step1)
 
 # %%
-BEST_ITER = 1000  # to automatically catch the best hyperparameter, set to : gs_step1.best_params_["regressor__GB__max_iter"]
-BEST_LR = 0.3  # to automatically catch the best hyperparameter, set to : gs_step1.best_params_["regressor__GB__learning_rate"]
+BEST_ITER = 500  # to automatically catch the best hyperparameter, set to : gs_step1.best_params_["regressor__GB__max_iter"]
+BEST_LR = 0.25  # to automatically catch the best hyperparameter, set to : gs_step1.best_params_["regressor__GB__learning_rate"]
 
 # %%
 param_grid_step2 = {
@@ -302,6 +302,8 @@ gb_final = HistGradientBoostingRegressor(
     l2_regularization=BEST_L2,
     random_state=RANDOM_STATE,
 )
+
+df = pd.read_parquet('s3://projet-funathon/2026/project1/data/2_preprocessing/df.parquet')
 
 X = df.drop(columns=["price_sqm"])
 y = df["price_sqm"]

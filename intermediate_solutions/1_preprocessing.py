@@ -247,5 +247,3 @@ model = TransformedTargetRegressor(
 )
 
 
-
-# %%
