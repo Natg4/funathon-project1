@@ -56,7 +56,7 @@ If you want to have a closer look at the data, CEREMA publishes on [its website]
 |     | Label of the variable   | Full name of the variable      | Explanation and remarks       | Original label of the variable (French)   |
 |--:|:---------|:---------------------------------|:------------------------------------------------------------------|:-------------|
 |   1 | dist_tosea              | Distance of the property to the nearest seashore - capped at 10km                       | This variable has been calculated      | distance_ltm (calculated)                 |
-|   2 | farea                   | Reported floor area of the property                         |                           | dsupdc        |
+|   2 | farea                   | Floor area of the property                         |                           | dsupdc        |
 |   3 | has_cheating            | If the property has access to central heating               | The modalities are coded in the following way : <br> - `0` : `No` <br> - `1` : `Missing value` <br> - `2` : `Yes`                       | gchclc        |
 |   4 | has_elec                | If the property has access to electricity                   | The modalities are coded in the following way : <br> - `0` : `No` <br> - `1` : `Missing value` <br> - `2` : `Yes`                       | gelelc        |
 |   5 | has_elevator            | If the building of the flat has an elevator (for flats only)| The modalities are coded in the following way : <br> - `0` : `No` <br> - `1` : `Missing value` <br> - `2` : `Yes`                       | gasclc        |
@@ -102,7 +102,7 @@ If you want to have a closer look at the data, CEREMA publishes on [its website]
 
 See [CEREMA's documentation (in French)](https://doc-datafoncier.cerema.fr/doc/ff/pb0010_local) for a more detailled description.
 
-# Detailled note 
+# Detailed note 
 
 Note that the variable year of the building has been harmonized to correct for typing mistakes. Here are the transformation made from the original data :
 
