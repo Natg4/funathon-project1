@@ -5,11 +5,8 @@
 import pandas as pd 
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder, FunctionTransformer
-from sklearn.compose import ColumnTransformer, TransformedTargetRegressor
-from sklearn.pipeline import Pipeline
-import requests
+from sklearn.compose import ColumnTransformer
 from joblib import load
-import io
 
 RANDOM_STATE = 202605
 
