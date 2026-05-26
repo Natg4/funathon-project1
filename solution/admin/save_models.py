@@ -37,6 +37,7 @@ shutil.copy(input_script, "temp/temp.py")
 # Step 2: Add lines to temp script to dump model
 with open("temp/temp.py", "a") as f:
     f.write("\n\n# Save model\n")
+    f.write("print('Save model to local storage')\n")
     f.write("import joblib\n")
     f.write(f"joblib.dump({model_name}, 'temp/temp.joblib')\n")
 
@@ -44,9 +45,11 @@ with open("temp/temp.py", "a") as f:
 subprocess.run(["uv", "run", "temp/temp.py"])
 
 # Step 4: Upload temp.joblib to S3
+print('Save model from local storage to S3')
 upload_file_s3("temp/temp.joblib", s3_name)
 
 # Step 5: Cleanup temporary files
+print('Remove temporary files')
 os.remove("temp/temp.py")
 os.remove("temp/temp.joblib")
 
