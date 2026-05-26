@@ -5,6 +5,8 @@ from preprocess import complete_pre_processing
 from log_mlflow import log_to_mlflow
 from pipeline import set_pipeline
 from utils import setup_logging, set_seed, check_data, store_datasets, store_model_mlflow_s3
+import warnings
+warnings.filterwarnings("ignore", message=".*sklearn.utils.parallel.delayed.*")
 
 logger = setup_logging()
 # %%
@@ -100,7 +102,8 @@ logger.info("Fitting RF model")
 rf_params = {
         "n_estimators": 80,
         "max_features": "sqrt",
-        "min_samples_leaf": 40
+        "min_samples_leaf": 40,
+        "max_depth": 13
     }
 
 rf_model_final = set_pipeline(

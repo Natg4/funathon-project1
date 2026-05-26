@@ -56,7 +56,7 @@ def pre_process_raw_data(df):
     df = df.dropna()
 
     df["prop_type"] = pd.Categorical(
-        df["prop_type"],
+        df["prop_type"].astype(str),
         categories=["1", "2"],
         ordered=False
     ).rename_categories({"1": "House", "2": "Flat"})
