@@ -152,7 +152,7 @@ uv add <dependency_name>
 
 When running commands in the terminal, make sure you are working from the root of the Git repository.
 
-You can verify your current location by checking the terminal prompt: it should end with *funathon2024_project1*. If it does not, navigate to the correct directory using the `cd` command.
+You can verify your current location by checking the terminal prompt: it should end with *funathon2024-project1*. If it does not, navigate to the correct directory using the `cd` command.
 
 *For example* :
 
