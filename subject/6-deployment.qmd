@@ -128,7 +128,7 @@ INFO:     127.0.0.1:60728 - "GET / HTTP/1.1" 200 OK
 :::
 
 
-If you want to close down the API, go to the Terminal where it has been laucnhed and press <kbd>CTRL</kbd>+<kbd>C</kbd> from your keyboard. 
+If you want to close down the API, go to the Terminal where it has been launched and press <kbd>CTRL</kbd>+<kbd>C</kbd> from your keyboard. 
 
 ::: {.callout-note}
 
@@ -196,7 +196,7 @@ model = mlflow.sklearn.load_model(MODEL_URI)
 ```
 
 
-4. (*optionnal*) We will now write the prediction endpoint. To do so, **add a `/predict` endpoint** in you  file `api.py` with the following characteristics: 
+4. (*optional*) We will now write the prediction endpoint. To do so, **add a `/predict` endpoint** in you  file `api.py` with the following characteristics: 
 
 - it takes as input a dictionary of features to run the prediction on;
 - Transform the input data into a pandas' dataframe; 
@@ -259,7 +259,7 @@ def predict(prop_features: dict):
 
     # Turning prop_type to Categorical data
     prop_features_df["prop_type"] = pd.Categorical(
-        prop_features_df["prop_type"],
+        prop_features_df["prop_type"].astype(str),
         categories=["1", "2"],
         ordered=False
     ).rename_categories({"1": "House", "2": "Flat"})
@@ -284,7 +284,7 @@ def predict(prop_features: dict):
 
 
 
-5. We will check that the API runs properly locally. **Predict the price of a property with the following characteristics using python's `requests` :** 
+5. We will check that the API runs properly locally. **Predict the price of a property with the following characteristics using Python's `requests` :** 
 - a flat (prop_type: 2):
   - a floor area of 65m²;
   - one shower;
@@ -300,7 +300,7 @@ def predict(prop_features: dict):
   - has stairs. 
 
 
-To avoid typing everything, you can use the list of variables or use the `build_feature_dict` function from [the gradient boosting section](3-GB_model.qmdl#sec-gb-prediction) or [the random forest section](3-RF_model.qmdl#sec-rf-prediction).
+To avoid typing everything, you can use the list of variables or use the `build_feature_dict` function from [the gradient boosting section](3-GB_model.qmd#sec-gb-prediction) or [the random forest section](3-RF_model.qmd#sec-rf-prediction).
 
 Don't forget to see how the variables are encoded in the [dedicated section](1-intro_data.qmd) ! 
 
@@ -350,7 +350,7 @@ Don't forget to see how the variables are encoded in the [dedicated section](1-i
   }
 ```
 
-You can now query your API with python's `request`.
+You can now query your API with Python's `request`.
 
 
 
@@ -420,6 +420,6 @@ Congrats 🎉! In this section, we have:
 
 - Built a **FastAPI** application that wraps our trained scikit-learn model,
 - Exposed a `/predict` endpoint that returns a predicted `price_sqm` and total `predicted_price`,
-- Tested the API locally `requests`.
+- Tested the API locally with `requests`.
 
 The next natural step — beyond the scope of this tutorial — would be to containerize this API with Docker and deploy it on a cloud platform so it becomes accessible to external users.
