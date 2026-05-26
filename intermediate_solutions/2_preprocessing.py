@@ -1,5 +1,5 @@
 
-## Exercice 1: Understanding data inputs
+## Exercise 1: Understanding data inputs
 # %%
 
 import duckdb
@@ -38,7 +38,7 @@ import pandas as pd
 trans = trans[trans["prop_loc_dep"].isin(["75", "77", "78", "91", "92", "93", "94", "95"])]
 
 
-## Exercice 2: Analyzing data inputs
+## Exercise 2: Analyzing data inputs
 # %%
 
 trans["price_sqm"] = trans["price"] / trans["farea"]
@@ -169,7 +169,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 
-## Exercice 3: The scikit-learn pipeline
+## Exercise 3: The scikit-learn pipeline
 # %%
 
 def date_to_days(X: pd.Series, ref_date: pd.Timestamp):

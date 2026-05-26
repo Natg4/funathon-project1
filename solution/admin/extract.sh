@@ -17,7 +17,7 @@ fi
 # Extract Python code blocks, remove #| lines, and trim the exact number of leading whitespace
 # Doesn't extract code that have #| echo: false
 awk '
-/# Exercice/ {
+/# Exercise/ {
     print ""; print $0;
     next;
     }

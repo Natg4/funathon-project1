@@ -64,7 +64,7 @@ def predicted_actual_plot(y_test, y_pred_test, model_name):
 
 
 
-## Exercice 7: Train your first Gradient Boosting model
+## Exercise 7: Train your first Gradient Boosting model
 # %%
 
 from sklearn.ensemble import HistGradientBoostingRegressor
@@ -106,7 +106,7 @@ for split, X, y in list:
 
 
 
-## Exercice 8: Tuning Gradient Boosting hyperparameters
+## Exercise 8: Tuning Gradient Boosting hyperparameters
 # %%
 
 X_train = pd.read_parquet("https://minio.lab.sspcloud.fr/projet-funathon/2026/project1/data/2_preprocessing/X_train.parquet")
@@ -332,7 +332,7 @@ gb_model_final.fit(X_train, y_train)
 print("Final model trained.")
 
 
-## Exercice 9: Evaluate the final Gradient Boosting model
+## Exercise 9: Evaluate the final Gradient Boosting model
 # %%
 
 list = [("train", X_train, y_train), ("test", X_test, y_test)]
@@ -347,7 +347,7 @@ predicted_actual_plot(y_test, y_pred_test, "Gradient Boosting")
 
 
 
-## Exercice 9bis: Now, let's play : predict the housing price for your custom address {#sec-gb-prediction}
+## Exercise 9bis: Now, let's play : predict the housing price for your custom address {#sec-gb-prediction}
 # %%
 
 def build_feature_dict(loc_x, loc_y, fare_a, prop_type, feature_dict=None):

@@ -31,7 +31,7 @@ You have to load the file stored in the subfolder `2026/project1/data/1_input/tr
 
 :::
 
-## Exercice 1: Understanding data inputs
+## Exercise 1: Understanding data inputs
 
 The aim of this part is to manipulate new database and understand features in order to prepare the preprocessing steps: it's an important step in ML pipeline.
 
@@ -130,7 +130,7 @@ trans = trans[trans["prop_loc_dep"].isin(["75", "77", "78", "91", "92", "93", "9
 
 # What transformations should be applied to the data ?
 
-## Exercice 2: Analyzing data inputs
+## Exercise 2: Analyzing data inputs
 
 We will transform a few features for the training part. It will enhance the quality of our model.
 
@@ -471,7 +471,7 @@ y_test  = pd.read_parquet("https://minio.lab.sspcloud.fr/projet-funathon/2026/pr
 
 # How do you prepare your data with scikit-learn?
 
-## Exercice 3: The scikit-learn pipeline
+## Exercise 3: The scikit-learn pipeline
 
 You are going to build your first scikit-learn pipeline. To begin, you can go to the [scikit-learn quickstart page](https://scikit-learn.org/stable/getting_started.html) for an overview.
 

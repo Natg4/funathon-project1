@@ -1,5 +1,5 @@
 
-# Exercice 4: Train your first Random Forest model
+# Exercise 4: Train your first Random Forest model
 # %%
 
 import pandas as pd
@@ -116,7 +116,7 @@ print(f"Test - MSE: {mean_squared_error(y_test, y_pred_test)}")
 
 
 
-# Exercice 5: Tuning a random forest's hyperparameters
+# Exercise 5: Tuning a random forest's hyperparameters
 # %%
 
 # Sample the train dataset using Pandas' index
@@ -292,7 +292,7 @@ print(type(rf_model_final))
 rf_model_final.fit(X_train, y_train)
 
 
-# Exercice 6: Evaluate the final Random Forest model
+# Exercise 6: Evaluate the final Random Forest model
 # %%
 
 y_pred_test = rf_model_final.predict(X_test)

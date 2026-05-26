@@ -64,7 +64,7 @@ gb_model_final = load(io.BytesIO(requests.get(url).content))
 
 :::
 
-# Exercice 8 – Deploying a local API
+# Exercise 8 – Deploying a local API
 
 1. We will first deploy a basic fastAPI. FastAPI allows you to define an HTTP endpoint in just a few lines of Python. Here is a minimal working example:
 

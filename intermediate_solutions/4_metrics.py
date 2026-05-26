@@ -1,5 +1,5 @@
 
-## Exercice 10: Compute evaluation metrics
+## Exercise 10: Compute evaluation metrics
 # %%
 
 import pandas as pd 
@@ -105,7 +105,7 @@ print(f"MAPE RF: {mape_pct_rf:.2f} %")
 print(f"MAPE GB: {mape_pct_gb:.2f} %")
 
 
-## Exercice 11: Generate diagnostic plots
+## Exercise 11: Generate diagnostic plots
 # %%
 
 import matplotlib.pyplot as plt

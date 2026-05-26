@@ -33,7 +33,7 @@ So, RF rely on three key elements : building **aggregated regression or classifi
 
 For more information, you can read the paragraph on RF hyperparameters [here](https://inseefrlab-github-io.translate.goog/DT_methodes_ensemblistes/chapters/chapter3/2-guide_usage_RF.html?_x_tr_sl=fr&_x_tr_tl=en&_x_tr_hl=en&_x_tr_pto=wapp#sec-hyperparam-rf)
 
-# Exercice 4: Train your first Random Forest model
+# Exercise 4: Train your first Random Forest model
 
 
 
@@ -243,7 +243,7 @@ print(f"Test - MSE: {mean_squared_error(y_test, y_pred_test)}")
 Congrats 🥳! You have trained your first RF model. Now, try to find the best hyperparameters to minimize the final predicted error of the model.
 
 
-# Exercice 5: Tuning a random forest's hyperparameters
+# Exercise 5: Tuning a random forest's hyperparameters
 
 Now that you understand what a random forest is, we will tune its hyperparameters for training. In this exercise, your aim is to train the best model for the prediction of price per square meter.
 
@@ -585,7 +585,7 @@ rf_model_final.fit(X_train, y_train)
 
 Congrats ! You have optimized your RF model. Now, you need to evaluate its accuracy — that is, how close the model's predictions are to the actual values..
 
-# Exercice 6: Evaluate the final Random Forest model
+# Exercise 6: Evaluate the final Random Forest model
 
 ## Part 1 : Calcuate the evaluation metrics
 

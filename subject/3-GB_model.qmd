@@ -129,7 +129,7 @@ def predicted_actual_plot(y_test, y_pred_test, model_name):
 
 :::
 
-## Exercice 7: Train your first Gradient Boosting model
+## Exercise 7: Train your first Gradient Boosting model
 
 1.  Using the `HistGradientBoostingRegressor` class and its [scikit-learn documentation page](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.HistGradientBoostingRegressor.html), **define and train a baseline model with default hyperparameters**. 
 For convenience, load the training and testing datasets `X_train, X_test, y_train, y_test` that were already defined at the end of the [pre-processing section](2-preprocessing.qmd) using panda's `read_parquet`.
@@ -245,7 +245,7 @@ For each step, we record **both training and test scores** to monitor overfittin
 We use the same `X_train`, `X_test`, `y_train`, `y_test` splits defined in the preprocessing section. Note that strictly speaking, the test set should not be used to select hyperparameters — a proper hold-out validation set should be used instead. We use the test set here for simplicity and pedagogical clarity.
 :::
 
-## Exercice 8: Tuning Gradient Boosting hyperparameters
+## Exercise 8: Tuning Gradient Boosting hyperparameters
 
 0. Let's prepare the pipeline. This time, we will use all of the features : 
 
@@ -616,7 +616,7 @@ print("Final model trained.")
 
 # Evaluation of Grandient Boosting model
 
-## Exercice 9: Evaluate the final Gradient Boosting model
+## Exercise 9: Evaluate the final Gradient Boosting model
 
 
 ::: {.callout-important title="If you're stuck - fetch back final GB model"}
@@ -671,7 +671,7 @@ predicted_actual_plot(y_test, y_pred_test, "Gradient Boosting")
 You see that the model isn't perfect.
 **It's only a tutorial so we won't try to fine-tune it more but the model would need to be better suited before going to production.**
 
-## Exercice 9bis: Now, let's play : predict the housing price for your custom address {#sec-gb-prediction}
+## Exercise 9bis: Now, let's play : predict the housing price for your custom address {#sec-gb-prediction}
 
 For the prediction, you need to create a dictionary containing all the features X. Since we have more than ten features, we simplify the exercise with a function that builds the dictionary and lets you override some of its values.
 
