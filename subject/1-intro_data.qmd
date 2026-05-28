@@ -89,7 +89,7 @@ If you want to have a closer look at the data, CEREMA publishes on [its website]
 |  33 | prop_loc_dep            | Department code where the property is located               | Data doesn't cover the whole French territory - overseas territory are included but Alsace-Moselle (Eastern part of France) isn't       | ccodep        |
 |  34 | prop_loc_x              | Longitude where the property is located                     | see remarks above         | x             |
 |  35 | prop_loc_y              | Latitude where the property is located                      | see remarks above         | y             |
-|  36 | prop_type               | Type of property   | 1 represents a flat and 2 a house      | dteloc        |
+|  36 | prop_type               | Type of property   | 1 represents a house and 2 a flat      | dteloc        |
 |  37 | prop_year_harm          | Year of construction of the property                         | This variable has been harmonized to correct for typing mistakes. More details are available in the introduction.                        | jannath       |
 |  38 | s_land_agri             | Agricultural land area (square meters)                      | Agricultural land is used for farming. It includes fields, meadows, orchards and vineyards.    | dcntagri      |
 |  39 | s_land_artif            | Artificial land area (square meters)                        | Artificial land includes recreational areas, land, building plots and gardens. Artificial land refers to land that has been altered by humans.                      | dcntsol       |
@@ -117,7 +117,7 @@ Note that the variable year of the building has been harmonized to correct for t
 | 1120 ≤ prop_year ≤ 1199 | Replace the second 1 with 9 | 1155 → 1955 |
 | 1200 ≤ prop_year ≤ 2024 | No change | 1200 → 1200 |
 
-More information about this transformation is available [online](https://doc-datafoncier.cerema.fr/doc/ff/pb40_pevprincipale/prop_year_harm) (in French).
+More information about this transformation is available [online](https://doc-datafoncier.cerema.fr/doc/ff/pb40_pevprincipale/jannath) (in French).
 
 # Next step
 Now that you've discovered the data, we can start having a deeper look at it and pre-processing it for our model. 
