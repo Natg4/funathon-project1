@@ -7,7 +7,7 @@ format:
     number-sections: true
 ---
 
-After training and tuning a model, it is essential to track experiments and save artifacts in a reproducible way. [MLflow](https://mlflow.org/) is an open-source platform that manages the full ML lifecycle: experiment tracking, model logging and deployment.
+After having seen how to train and tune a model, **it is essential to track experiments and save artifacts in a reproducible way**. [MLflow](https://mlflow.org/) is an open-source platform that manages the full ML lifecycle: experiment tracking, model logging and deployment.
 
 In this section, we will use MLflow to log the pre-trained RF model built in the [dedicated section](3-RF_model.qmd), along with its configuration tags, hyperparameters, evaluation metrics, diagnostic figures and the model artifact itself.
 
@@ -24,6 +24,8 @@ Key MLflow concepts you will use in this exercise are:
 The MLflow tracking user interface (UI) lets you compare runs, visualize metrics over time and retrieve any logged artifact. All the logging calls in this exercise are made inside a single `with mlflow.start_run()` block, which automatically closes the run when the block exits.
 
 Don't forget to search in [MLFlow documentation](https://mlflow.org/docs/latest/api_reference/python_api/mlflow.html#) for the functions details you're looking for. 
+
+If you're struggling with this part, the complete solution is available in the `solution/log_mlflow.py` and `solution/main.py` scripts, 
 
 # Exercise 12: Log your RF model with MLflow
 
