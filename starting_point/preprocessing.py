@@ -1,6 +1,8 @@
 import duckdb
 import os
 import pandas as pd
+import my_functions
+
 
 RANDOM_STATE = 202605
 
@@ -40,6 +42,74 @@ df['prop_year_harm_10'] = df['prop_year_harm_10'].where(df['prop_year_harm_10'] 
 
 # Dropping old column
 df = df.drop(columns=["prop_year_harm"])
+
+
+from sklearn.model_selection import train_test_split
+
+# Split features / target
+X = df.drop(columns=["price_sqm"])  # X must contain only the features we'll learn from
+y = df["price_sqm"]  # target must be a dataframe with 1 column
+
+# Split train / test set
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.2,
+    random_state=RANDOM_STATE
+)
+
+
+
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, FunctionTransformer
+
+date_transformer = FunctionTransformer(
+    my_functions.date_to_days,
+    kw_args={"ref_date": pd.Timestamp('2010-01-01 00:00')}
+    )
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ("cat", OneHotEncoder(handle_unknown="ignore"), ["prop_type", "prop_year_harm_10"]),  # one-hot encoder on feature
+        ("dat", date_transformer, "trans_date") # feature time since 01-01-2010
+    ],
+    remainder="passthrough"  # to keep features not transformed
+)
+
+
+y_transformer = FunctionTransformer(
+    func=my_functions.log_transform,
+    inverse_func=my_functions.inverse_log_transform)
+
+# Other option with Numpy :
+# y_transformer = FunctionTransformer(
+#     func=np.log,
+#     inverse_func=np.exp)
+
+rf_params = {
+    "n_estimators": 100,
+    "max_depth": 5,
+    "max_features": "sqrt",
+    "min_samples_split": 2,
+    "min_samples_leaf": 10,
+    "random_state": RANDOM_STATE,
+    "oob_score": True,
+    "n_jobs": -1,  # The number of jobs to run in parallel, -1 using all processors
+}
+
+from sklearn.preprocessing import OneHotEncoder, FunctionTransformer
+from sklearn.compose import ColumnTransformer, TransformedTargetRegressor
+from sklearn.pipeline import Pipeline
+from sklearn.ensemble import RandomForestRegressor
+
+rf_pipeline = Pipeline([
+    ('preprocessing', preprocessor),
+    ('RF', RandomForestRegressor(**rf_params))
+])
+
+model = TransformedTargetRegressor(
+    regressor=rf_pipeline,
+    transformer=y_transformer
+)
 
 
 

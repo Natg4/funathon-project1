@@ -534,13 +534,13 @@ cols_num = selector(dtype_include="number")  # Defines numerical features as col
 
 preprocessor = ColumnTransformer([
     ("num", StandardScaler(), cols_num), # scaling can be useful for some model but not for our project
-    ("cat", OneHotEncoder(), ["region", "job_type", "prop_year_harm_10"])
+    ("cat", OneHotEncoder(), ["region", "job_type", "prop_year_harm_10"]) #Onehtencoder sert à créer des binaires pour chaque modalité
     ],
     remainder="passthrough" # the remainder parameter tells what to do with features not transformed. By default, non transformed data is dropped. Specifying "passthrough" passes on the data unchanged to the model.
 )
 
 pipeline = Pipeline([
-    ("preprocessor", preprocessor),
+    ("preprocessor", preprocessor), #Ce qui est entre guillemets sert de nom d'étape
     ("model", RandomForestRegressor())
 ])
 ```
